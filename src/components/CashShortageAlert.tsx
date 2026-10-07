@@ -29,7 +29,7 @@ export const CashShortageAlert: React.FC<CashShortageAlertProps> = ({
               Based on the transactions provided, your monthly operating cash inflow is covering your expenses comfortably.
               This assumes client income remains around the recent level and no unexpected large capital expenditure occurs.
               Maintaining at least 30 days of recurring operating expenses (approx. ₹
-              {Math.round(totalExpenses * 0.3 / 1000) * 1000} buffer) is recommended to absorb client invoice payment delays.
+              {Math.max(5000, Math.round((totalExpenses * 0.3) / 1000) * 1000).toLocaleString('en-IN')} buffer) is recommended to absorb client invoice payment delays.
             </p>
           ),
         };

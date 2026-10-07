@@ -1,13 +1,16 @@
 import React from 'react';
 import { ArrowUpRight, ArrowDownRight, Wallet, TrendingUp, PiggyBank, UserCheck } from 'lucide-react';
 import { CashFlowSummary } from '../types/cashflow';
+import { Language, UI_TEXT } from '../utils/i18n';
 
 interface KPICardsProps {
   summary: CashFlowSummary;
+  language?: Language;
 }
 
-export const KPICards: React.FC<KPICardsProps> = ({ summary }) => {
+export const KPICards: React.FC<KPICardsProps> = ({ summary, language = 'en' }) => {
   const isNetPositive = summary.netCashMovement >= 0;
+  const t = UI_TEXT[language];
 
   return (
     <div className="space-y-4">
@@ -17,7 +20,7 @@ export const KPICards: React.FC<KPICardsProps> = ({ summary }) => {
         <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs relative overflow-hidden">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Total Income
+              {t.kpiTotalIncome}
             </span>
             <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
               <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
@@ -28,7 +31,7 @@ export const KPICards: React.FC<KPICardsProps> = ({ summary }) => {
               ₹{summary.totalIncome.toLocaleString('en-IN')}
             </div>
             <p className="text-xs text-emerald-600 font-medium mt-1 flex items-center gap-1">
-              <span>All recorded cash inflows</span>
+              <span>{language === 'ml' ? 'ലഭിച്ച ആകെ തുകകൾ' : 'All recorded cash inflows'}</span>
             </p>
           </div>
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500" />
@@ -38,7 +41,7 @@ export const KPICards: React.FC<KPICardsProps> = ({ summary }) => {
         <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs relative overflow-hidden">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Total Expenses
+              {t.kpiTotalExpenses}
             </span>
             <div className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
               <ArrowDownRight className="w-4 h-4 stroke-[2.5]" />
@@ -49,7 +52,7 @@ export const KPICards: React.FC<KPICardsProps> = ({ summary }) => {
               ₹{summary.totalExpenses.toLocaleString('en-IN')}
             </div>
             <div className="text-xs text-slate-500 font-medium mt-1 flex items-center justify-between">
-              <span>Operating + Personal spends</span>
+              <span>{language === 'ml' ? 'ബിസിനസ്സ് + വ്യക്തിഗത ചിലവുകൾ' : 'Operating + Personal spends'}</span>
             </div>
           </div>
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-rose-500" />
@@ -69,7 +72,7 @@ export const KPICards: React.FC<KPICardsProps> = ({ summary }) => {
                 isNetPositive ? 'text-emerald-700' : 'text-rose-700'
               }`}
             >
-              Net Cash Movement
+              {t.kpiNetCash}
             </span>
             <div
               className={`w-8 h-8 rounded-xl flex items-center justify-center ${
@@ -95,7 +98,7 @@ export const KPICards: React.FC<KPICardsProps> = ({ summary }) => {
                 isNetPositive ? 'text-emerald-600' : 'text-rose-600'
               }`}
             >
-              {isNetPositive ? 'Cash Surplus Generated' : 'Net Cash Deficit'}
+              {isNetPositive ? t.kpiCashSurplus : t.kpiCashDeficit}
             </p>
           </div>
           <div
@@ -109,7 +112,7 @@ export const KPICards: React.FC<KPICardsProps> = ({ summary }) => {
         <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs relative overflow-hidden">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              {summary.closingBalance !== null ? 'Closing Balance' : 'Cash Position'}
+              {summary.closingBalance !== null ? t.kpiClosingBalance : (language === 'ml' ? 'ക്യാഷ് സ്ഥിതി' : 'Cash Position')}
             </span>
             <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
               <Wallet className="w-4 h-4 stroke-[2.5]" />
@@ -126,16 +129,16 @@ export const KPICards: React.FC<KPICardsProps> = ({ summary }) => {
                   ₹{summary.closingBalance.toLocaleString('en-IN')}
                 </div>
                 <p className="text-xs text-slate-500 font-medium mt-1">
-                  Opening: ₹{summary.openingBalance?.toLocaleString('en-IN')}
+                  {language === 'ml' ? 'തുടക്ക ബാലൻസ്:' : 'Opening:'} ₹{summary.openingBalance?.toLocaleString('en-IN')}
                 </p>
               </>
             ) : (
               <>
-                <div className="text-lg font-bold text-slate-600 mt-1">
-                  Opening balance not provided
+                <div className="text-base sm:text-lg font-bold text-slate-600 mt-1">
+                  {language === 'ml' ? 'തുടക്ക ബാലൻസ് നൽകിയിട്ടില്ല' : 'Opening balance not provided'}
                 </div>
                 <p className="text-xs text-slate-400 mt-1">
-                  Calculated from net cash movement
+                  {language === 'ml' ? 'നെറ്റ് മിച്ചത്തിൽ നിന്ന് കണക്കാക്കി' : 'Calculated from net cash movement'}
                 </p>
               </>
             )}
@@ -150,12 +153,12 @@ export const KPICards: React.FC<KPICardsProps> = ({ summary }) => {
           <div className="flex items-center gap-2 text-amber-900 font-medium">
             <UserCheck className="w-4 h-4 text-amber-700 shrink-0" />
             <span>
-              <strong>Personal Withdrawals detected:</strong> ₹
-              {summary.personalWithdrawalsTotal.toLocaleString('en-IN')} was taken out for personal/home expenses.
+              <strong>{t.personalWithdrawalNote}</strong> ₹
+              {summary.personalWithdrawalsTotal.toLocaleString('en-IN')} {language === 'ml' ? 'സ്വന്തം ആവശ്യങ്ങൾക്കായി ബിസിനസ്സിൽ നിന്ന് പിൻവലിച്ചു.' : 'was taken out for personal/home expenses.'}
             </span>
           </div>
           <span className="text-amber-800 text-[11px] bg-amber-100 px-2 py-0.5 rounded-md font-semibold">
-            Tracked separately from operating costs
+            {t.personalWithdrawalSub}
           </span>
         </div>
       )}

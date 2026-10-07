@@ -1,18 +1,23 @@
 import React from 'react';
 import { CheckCircle2, AlertTriangle, AlertOctagon, Activity, Sparkles } from 'lucide-react';
 import { CashHealthStatus } from '../types/cashflow';
+import { Language } from '../utils/i18n';
 
 interface CashHealthCardProps {
   status: CashHealthStatus;
   headline: string;
   reason: string;
+  language?: Language;
 }
 
 export const CashHealthCard: React.FC<CashHealthCardProps> = ({
   status,
   headline,
   reason,
+  language = 'en',
 }) => {
+  const isMl = language === 'ml';
+
   const getBadgeConfig = () => {
     switch (status) {
       case 'manageable':
@@ -20,7 +25,7 @@ export const CashHealthCard: React.FC<CashHealthCardProps> = ({
           icon: CheckCircle2,
           bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-800',
           indicatorBg: 'bg-emerald-500',
-          badgeText: '🟢 MANAGEABLE',
+          badgeText: isMl ? '🟢 സുരക്ഷിതം' : '🟢 MANAGEABLE',
           titleColor: 'text-emerald-950',
           accentBorder: 'border-l-4 border-l-emerald-500',
         };
@@ -29,7 +34,7 @@ export const CashHealthCard: React.FC<CashHealthCardProps> = ({
           icon: AlertTriangle,
           bg: 'bg-amber-500/10 border-amber-500/20 text-amber-900',
           indicatorBg: 'bg-amber-500',
-          badgeText: '🟡 NEEDS ATTENTION',
+          badgeText: isMl ? '🟡 ശ്രദ്ധ വേണം' : '🟡 NEEDS ATTENTION',
           titleColor: 'text-amber-950',
           accentBorder: 'border-l-4 border-l-amber-500',
         };
@@ -38,7 +43,7 @@ export const CashHealthCard: React.FC<CashHealthCardProps> = ({
           icon: AlertOctagon,
           bg: 'bg-rose-500/10 border-rose-500/20 text-rose-900',
           indicatorBg: 'bg-rose-500',
-          badgeText: '🔴 POSSIBLE SHORTFALL',
+          badgeText: isMl ? '🔴 പണക്ഷാമ സാധ്യത' : '🔴 POSSIBLE SHORTFALL',
           titleColor: 'text-rose-950',
           accentBorder: 'border-l-4 border-l-rose-500',
         };
@@ -58,11 +63,11 @@ export const CashHealthCard: React.FC<CashHealthCardProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                Cash Health Diagnostic
+                {isMl ? 'പണത്തിന്റെ ആരോഗ്യ സ്ഥിതി' : 'Cash Health Diagnostic'}
               </span>
               <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200/50">
                 <Sparkles className="w-3 h-3" />
-                Coach Analysis
+                {isMl ? 'കോച്ച് വിശകലനം' : 'Coach Analysis'}
               </span>
             </div>
             <h3 className={`text-xl font-extrabold ${config.titleColor} mt-0.5 tracking-tight`}>

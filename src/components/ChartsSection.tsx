@@ -15,9 +15,11 @@ import {
 } from 'recharts';
 import { CashFlowSummary } from '../types/cashflow';
 import { BarChart3, PieChart as PieChartIcon, LineChart as LineChartIcon } from 'lucide-react';
+import { Language, getCategoryLabel } from '../utils/i18n';
 
 interface ChartsSectionProps {
   summary: CashFlowSummary;
+  language?: Language;
 }
 
 const DONUT_COLORS = [
@@ -35,23 +37,25 @@ const DONUT_COLORS = [
   '#84cc16', // Lime
 ];
 
-export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
-  const [activeTab, setActiveTab] = useState<'all' | 'bars' | 'distribution' | 'trend'>('all');
+export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary, language = 'en' }) => {
+  const isMl = language === 'ml';
 
   // Chart 1 Data: Bar Chart (Income vs Expenses vs Net Cash)
   const barData = [
     {
-      name: 'Total Income',
+      name: isMl ? 'ആകെ വരുമാനം' : 'Total Income',
       amount: summary.totalIncome,
       color: '#10b981', // Emerald
     },
     {
-      name: 'Total Expenses',
+      name: isMl ? 'ആകെ ചെലവുകൾ' : 'Total Expenses',
       amount: summary.totalExpenses,
       color: '#f43f5e', // Rose
     },
     {
-      name: summary.netCashMovement >= 0 ? 'Net Surplus' : 'Net Deficit',
+      name: summary.netCashMovement >= 0
+        ? (isMl ? 'നെറ്റ് മിച്ചം' : 'Net Surplus')
+        : (isMl ? 'നെറ്റ് കമ്മി' : 'Net Deficit'),
       amount: Math.abs(summary.netCashMovement),
       color: summary.netCashMovement >= 0 ? '#0284c7' : '#e11d48',
     },
@@ -66,7 +70,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
   let pieData: { name: string; value: number; percentage: number }[] = [];
   if (expenseCategories.length <= 6) {
     pieData = expenseCategories.map((c) => ({
-      name: c.category,
+      name: getCategoryLabel(c.category, language),
       value: c.amount,
       percentage: c.percentage,
     }));
@@ -78,12 +82,12 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
 
     pieData = [
       ...top5.map((c) => ({
-        name: c.category,
+        name: getCategoryLabel(c.category, language),
         value: c.amount,
         percentage: c.percentage,
       })),
       {
-        name: 'Other Categories',
+        name: isMl ? 'മറ്റ് വിഭാഗങ്ങൾ' : 'Other Categories',
         value: otherTotal,
         percentage: otherPct,
       },
@@ -168,7 +172,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
           </div>
 
           <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={240}>
               <BarChart data={barData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis
@@ -218,7 +222,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
           </div>
 
           <div className="h-64 w-full relative">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={240}>
               <PieChart>
                 <Tooltip content={<CustomPieTooltip />} />
                 <Pie
@@ -277,7 +281,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
 
           <div className="h-64 w-full">
             {trendData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height={240}>
                 <LineChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                   <XAxis

@@ -7,6 +7,7 @@ import {
   IncomeCategory,
 } from '../types/cashflow';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '../utils/parser';
+import { Language, UI_TEXT, getCategoryLabel } from '../utils/i18n';
 import {
   Search,
   Filter,
@@ -26,6 +27,7 @@ interface TransactionTableProps {
   onUpdateTransaction: (updated: Transaction) => void;
   onDeleteTransaction: (id: string) => void;
   onAddTransaction: (newTx: Omit<Transaction, 'id'>) => void;
+  language?: Language;
 }
 
 export const TransactionTable: React.FC<TransactionTableProps> = ({
@@ -33,7 +35,10 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
   onUpdateTransaction,
   onDeleteTransaction,
   onAddTransaction,
+  language = 'en',
 }) => {
+  const isMl = language === 'ml';
+  const t = UI_TEXT[language];
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<'All' | 'Income' | 'Expense' | 'Needs Review'>('All');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -124,14 +129,14 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
         <div>
           <div className="flex items-center gap-2">
             <h3 className="font-extrabold text-lg text-slate-900 tracking-tight">
-              Transaction Ledger
+              {t.ledgerTitle}
             </h3>
             <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-              {transactions.length} Total
+              {transactions.length} {isMl ? 'ഇടപാടുകൾ' : 'Total'}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Editable transaction records. Changes immediately recalculate your dashboard and cash health.
+            {t.ledgerSub}
           </p>
         </div>
 
@@ -142,7 +147,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search narration..."
+              placeholder={isMl ? 'തിരയുക...' : 'Search narration...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-8 pr-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 w-44"
@@ -151,19 +156,31 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
 
           {/* Type Filter Buttons */}
           <div className="flex rounded-lg border border-slate-300 p-0.5 bg-slate-50 text-xs font-semibold">
-            {(['All', 'Income', 'Expense', 'Needs Review'] as const).map((mode) => (
-              <button
-                key={mode}
-                onClick={() => setTypeFilter(mode)}
-                className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
-                  typeFilter === mode
-                    ? 'bg-white text-blue-700 shadow-2xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {mode}
-              </button>
-            ))}
+            {(['All', 'Income', 'Expense', 'Needs Review'] as const).map((mode) => {
+              const label =
+                isMl
+                  ? mode === 'All'
+                    ? 'എല്ലാം'
+                    : mode === 'Income'
+                    ? 'വരവ്'
+                    : mode === 'Expense'
+                    ? 'ചെലവ്'
+                    : 'പരിശോധന'
+                  : mode;
+              return (
+                <button
+                  key={mode}
+                  onClick={() => setTypeFilter(mode)}
+                  className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                    typeFilter === mode
+                      ? 'bg-white text-blue-700 shadow-2xs font-bold'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
           </div>
 
           <button
@@ -172,7 +189,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-2xs cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Add Entry</span>
+            <span>{isMl ? 'ഇടപാട് ചേർക്കുക' : 'Add Entry'}</span>
           </button>
         </div>
       </div>
@@ -273,20 +290,20 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
         <table className="w-full text-left border-collapse text-xs sm:text-sm">
           <thead>
             <tr className="bg-slate-50 text-slate-500 font-semibold text-xs border-b border-slate-200">
-              <th className="py-3 px-4 w-28">Date</th>
-              <th className="py-3 px-4">Description</th>
-              <th className="py-3 px-4 w-24">Type</th>
-              <th className="py-3 px-4 w-44">Category</th>
-              <th className="py-3 px-4 text-right w-32">Amount</th>
-              <th className="py-3 px-4 text-center w-24">Status</th>
-              <th className="py-3 px-4 text-right w-20">Actions</th>
+              <th className="py-3 px-4 w-28">{isMl ? 'തീയതി' : 'Date'}</th>
+              <th className="py-3 px-4">{isMl ? 'വിവരണം' : 'Description'}</th>
+              <th className="py-3 px-4 w-24">{isMl ? 'തരം' : 'Type'}</th>
+              <th className="py-3 px-4 w-44">{isMl ? 'വിഭാഗം' : 'Category'}</th>
+              <th className="py-3 px-4 text-right w-32">{isMl ? 'തുക' : 'Amount'}</th>
+              <th className="py-3 px-4 text-center w-24">{isMl ? 'സ്റ്റാറ്റസ്' : 'Status'}</th>
+              <th className="py-3 px-4 text-right w-20">{isMl ? 'പ്രവർത്തനം' : 'Actions'}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {filtered.length === 0 ? (
               <tr>
                 <td colSpan={7} className="py-8 text-center text-slate-400 text-xs">
-                  No transactions match the selected filter or search query.
+                  {isMl ? 'ഇടപാടുകൾ ഒന്നും കണ്ടെത്തിയില്ല.' : 'No transactions match the selected filter or search query.'}
                 </td>
               </tr>
             ) : (
@@ -408,11 +425,11 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
                             : 'bg-slate-100 text-slate-700 border border-slate-200'
                         }`}
                       >
-                        {tx.type}
+                        {isMl ? (tx.type === 'Income' ? 'വരുമാനം' : 'ചെലവ്') : tx.type}
                       </span>
                     </td>
                     <td className="py-3 px-4 text-xs font-semibold text-slate-700">
-                      {tx.category}
+                      {getCategoryLabel(tx.category, language)}
                     </td>
                     <td className="py-3 px-4 text-right font-mono font-bold text-slate-900">
                       <span

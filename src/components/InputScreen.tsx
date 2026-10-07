@@ -1,18 +1,24 @@
 import React, { useState, useRef } from 'react';
 import { Upload, FileSpreadsheet, Sparkles, ArrowRight, CheckCircle2, ShieldCheck, HelpCircle } from 'lucide-react';
 import { parseRupeeAmount } from '../utils/parser';
+import { Language, UI_TEXT } from '../utils/i18n';
 
 interface InputScreenProps {
   onAnalyze: (rawText: string, file: File | null, openingBalance: number | null) => void;
   onLoadDemo: () => void;
+  onLoadMalayalamDemo: () => void;
   isLoading: boolean;
+  language: Language;
 }
 
 export const InputScreen: React.FC<InputScreenProps> = ({
   onAnalyze,
   onLoadDemo,
+  onLoadMalayalamDemo,
   isLoading,
+  language,
 }) => {
+  const t = UI_TEXT[language];
   const [activeMode, setActiveMode] = useState<'paste' | 'upload'>('paste');
   const [pasteContent, setPasteContent] = useState('');
   const [openingBalanceStr, setOpeningBalanceStr] = useState('');
@@ -87,7 +93,23 @@ export const InputScreen: React.FC<InputScreenProps> = ({
     }
   };
 
-  const placeholderText = `01/10/2026
+  const placeholderText =
+    language === 'ml'
+      ? `01/10/2026
+ക്ലയന്റ് അഡ്വാൻസ് പേയ്‌മെന്റ് - 35000
+കട വാടക - 15000
+പെട്രോൾ - 750
+ചായയും പലഹാരവും - 140
+ഇന്നത്തെ കച്ചവടം (UPI & Cash) - 12400
+പാക്കിംഗ് ബോക്സുകൾ വാങ്ങിയത് - 2800
+സ്റ്റോക്ക് സാധനങ്ങൾ എടുത്തത് - 18500
+സ്റ്റാഫ് ശമ്പള അഡ്വാൻസ് - 5000
+കടയിലെ കറന്റ് ബിൽ കെഎസ്ഇബി - 3200
+ഫേസ്ബുക്ക് ഇൻസ്റ്റാഗ്രാം പരസ്യം - 2500
+വെബ്സൈറ്റ് വർക്ക് ബാക്കി പണം - 24000
+വീട്ടുചെലവിന് എടുത്തത് - 8000
+കുട്ടിയുടെ സ്കൂൾ ഫീസ് - 4500`
+      : `01/10/2026
 Client payment - 15000
 Petrol - 800
 Tea - 120
@@ -106,25 +128,34 @@ Personal withdrawal home expense - 5000`;
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/60 text-blue-700 text-xs font-semibold mb-3">
           <Sparkles className="w-3.5 h-3.5" />
-          <span>Simple Cash-Flow Management for Indian Businesses</span>
+          <span>{language === 'ml' ? 'ലളിതമായ ബിസിനസ്സ് ക്യാഷ്-ഫ്ലോ മാനേജ്മെന്റ്' : 'Simple Cash-Flow Management for Indian Businesses'}</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-          Where did your money go this month?
+          {t.welcomeHeadline}
         </h1>
         <p className="mt-3 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-          Paste your transactions or upload your Excel sheet. I'll clean the data, find hidden money leaks, and show you what matters.
+          {t.welcomeSub}
         </p>
 
-        {/* Quick Demo CTA */}
-        <div className="mt-5 flex items-center justify-center gap-3">
+        {/* Quick Demo CTAs: Both Malayalam & English options */}
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={onLoadMalayalamDemo}
+            disabled={isLoading}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-emerald-800 bg-emerald-100 hover:bg-emerald-200/80 border border-emerald-300 transition-all shadow-xs cursor-pointer active:scale-98"
+          >
+            <Sparkles className="w-4 h-4 text-emerald-700" />
+            <span>{t.tryDemoMl}</span>
+          </button>
           <button
             type="button"
             onClick={onLoadDemo}
             disabled={isLoading}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-blue-700 bg-blue-100/70 hover:bg-blue-100 border border-blue-300 transition-all shadow-xs cursor-pointer active:scale-98"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-all shadow-xs cursor-pointer active:scale-98"
           >
             <Sparkles className="w-4 h-4 text-blue-600" />
-            <span>Try Demo Data (35 Realistic Transactions)</span>
+            <span>{t.tryDemoEn}</span>
           </button>
         </div>
       </div>
@@ -142,7 +173,7 @@ Personal withdrawal home expense - 5000`;
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >
-            A. Paste Data (Text, Notes, WhatsApp, UPI)
+            {t.pasteTab}
           </button>
           <button
             type="button"
@@ -153,7 +184,7 @@ Personal withdrawal home expense - 5000`;
                 : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >
-            B. Upload Excel / CSV (.xlsx, .xls, .csv)
+            {t.uploadTab}
           </button>
         </div>
 
@@ -163,10 +194,10 @@ Personal withdrawal home expense - 5000`;
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="block text-sm font-semibold text-slate-800">
-                  Paste your income & expense entries
+                  {t.pasteLabel}
                 </label>
                 <span className="text-xs text-slate-400">
-                  Accepts ₹, Rs, 15k, 1.2k, dates & notes
+                  {t.pasteHelper}
                 </span>
               </div>
               <textarea
@@ -227,7 +258,11 @@ Personal withdrawal home expense - 5000`;
                     </p>
                     <button
                       type="button"
-                      className="mt-4 px-4 py-2 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 inline-flex items-center gap-1.5"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        fileInputRef.current?.click();
+                      }}
+                      className="mt-4 px-4 py-2 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 inline-flex items-center gap-1.5 cursor-pointer"
                     >
                       <Upload className="w-3.5 h-3.5" />
                       <span>Upload transactions</span>
@@ -247,10 +282,10 @@ Personal withdrawal home expense - 5000`;
                 </div>
                 <div>
                   <label htmlFor="opening-balance-input" className="block text-sm font-bold text-slate-900">
-                    Opening Bank Balance (Optional)
+                    {t.openingBalanceLabel}
                   </label>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    If provided, we calculate your actual Closing Balance. Otherwise, we calculate Net Cash Movement.
+                    {t.openingBalanceHelp}
                   </p>
                 </div>
               </div>
@@ -285,7 +320,7 @@ Personal withdrawal home expense - 5000`;
               disabled={isLoading}
               className="w-full sm:flex-1 py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
             >
-              <span>Analyze Cash Flow</span>
+              <span>{t.analyzeBtn}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

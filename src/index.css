@@ -1,1 +1,66 @@
 @import "tailwindcss";
+
+@media print {
+  /* Hide all non-printable elements */
+  .no-print,
+  header,
+  nav,
+  button,
+  .print\\:hidden {
+    display: none !important;
+  }
+
+  /* Reset document for crisp paper output */
+  body, html, #root {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .printable-document {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Avoid awkward page break splits */
+  .break-inside-avoid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .break-before-page {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+
+  /* Full table expansion on paper */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  tr {
+    break-inside: avoid !important;
+  }
+
+  /* Hide modal backdrop shadow */
+  .fixed {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .max-w-5xl, .rounded-2xl {
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}

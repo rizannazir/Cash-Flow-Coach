@@ -382,3 +382,341 @@ export const DEMO_TRANSACTIONS: Transaction[] = [
     status: 'valid',
   },
 ];
+
+export const DEMO_OPENING_BALANCE_MALAYALAM = 32000;
+
+export const DEMO_RAW_TEXT_MALAYALAM = `01/10/2026 ക്ലയന്റ് അഡ്വാൻസ് പേയ്‌മെന്റ് കിട്ടിയത് - 35000
+01/10/2026 കട വാടക - 15000
+02/10/2026 ചായയും പലഹാരവും - 140
+02/10/2026 ബൈക്ക് പെട്രോൾ അടിച്ചത് - 750
+03/10/2026 ഇന്നത്തെ കച്ചവടം (UPI & Cash) - 12400
+04/10/2026 പാക്കിംഗ് ബോക്സുകൾ വാങ്ങിയത് - 2800
+04/10/2026 ചായ കാപ്പി കസ്റ്റമർ മീറ്റിംഗ് - 320
+05/10/2026 തുണി സ്റ്റോക്ക് സാധനങ്ങൾ എടുത്തത് - 18500
+06/10/2026 സാധനം എത്തിക്കാൻ ഓട്ടോ കൂലി - 350
+07/10/2026 സ്റ്റാഫ് ശമ്പള അഡ്വാൻസ് - 5000
+08/10/2026 കടയിലെ കറന്റ് ബിൽ കെഎസ്ഇബി - 3200
+09/10/2026 ഫേസ്ബുക്ക് ഇൻസ്റ്റാഗ്രാം പരസ്യം - 2500
+10/10/2026 ചായക്കടയിലെ ആഴ്ചപ്പണം നൽകിയത് - 680
+11/10/2026 വെബ്സൈറ്റ് വർക്ക് ബാക്കി പണം കിട്ടി - 24000
+12/10/2026 വീട്ടുചെലവിന് എടുത്തത് - 8000
+13/10/2026 വൈഫൈ ഇന്റർനെറ്റ് ബിൽ - 899
+14/10/2026 കൊറിയർ ചാർജ് പാർസൽ അയച്ചത് - 420
+15/10/2026 കൗണ്ടർ സെയിൽസ് വിൽപ്പന - 16200
+16/10/2026 സ്റ്റാഫ് അസിസ്റ്റന്റ് ശമ്പളം ബാക്കി - 14000
+17/10/2026 ഉച്ചയൂണ് ഹോട്ടൽ ഭക്ഷണം - 450
+18/10/2026 പ്രിന്റർ മഷിയും പേപ്പറും വാങ്ങിയത് - 1250
+19/10/2026 കുട്ടിയുടെ സ്കൂൾ ഫീസ് സ്വന്തം ആവശ്യം - 4500
+20/10/2026 കാർ പെട്രോൾ ഡെലിവറിക്ക് - 1200
+21/10/2026 കസ്റ്റമർ പ്രോജക്ട് പേയ്‌മെന്റ് - 28000
+22/10/2026 കസ്റ്റമർ പ്രോജക്ട് പേയ്‌മെന്റ് - 28000
+23/10/2026 എസി സർവീസിംഗ് അറ്റകുറ്റപ്പണി - 950
+24/10/2026 കച്ചവടം കളക്ഷൻ - 11500
+25/10/2026 ബാങ്ക് യുപിഐ ഗേറ്റ്‌വേ ചാർജ് - 450
+26/10/2026 വൈകുന്നേരത്തെ ചായ സ്നാക്സ് - 220
+27/10/2026 ബൈക്ക് പെട്രോൾ - 600
+28/10/2026 പലവക ചെലവുകൾ - 850
+29/10/2026 ചിട്ടി അടവ് തിരിച്ചടച്ചത് - 5000
+30/10/2026 കടയിലെ ബാക്കി സെയിൽസ് - 9800`;
+
+export const DEMO_TRANSACTIONS_MALAYALAM: Transaction[] = [
+  {
+    id: 'demo-ml-1',
+    date: '2026-10-01',
+    description: 'ക്ലയന്റ് അഡ്വാൻസ് പേയ്‌മെന്റ് കിട്ടിയത്',
+    type: 'Income',
+    category: 'Client Payments',
+    amount: 35000,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-2',
+    date: '2026-10-01',
+    description: 'കട വാടക',
+    type: 'Expense',
+    category: 'Rent',
+    amount: 15000,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-3',
+    date: '2026-10-02',
+    description: 'ചായയും പലഹാരവും',
+    type: 'Expense',
+    category: 'Food / Refreshments',
+    amount: 140,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-4',
+    date: '2026-10-02',
+    description: 'ബൈക്ക് പെട്രോൾ അടിച്ചത്',
+    type: 'Expense',
+    category: 'Transport / Fuel',
+    amount: 750,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-5',
+    date: '2026-10-03',
+    description: 'ഇന്നത്തെ കച്ചവടം (UPI & Cash)',
+    type: 'Income',
+    category: 'Sales',
+    amount: 12400,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-6',
+    date: '2026-10-04',
+    description: 'പാക്കിംഗ് ബോക്സുകൾ വാങ്ങിയത്',
+    type: 'Expense',
+    category: 'Inventory / Raw Materials',
+    amount: 2800,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-7',
+    date: '2026-10-04',
+    description: 'ചായ കാപ്പി കസ്റ്റമർ മീറ്റിംഗ്',
+    type: 'Expense',
+    category: 'Food / Refreshments',
+    amount: 320,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-8',
+    date: '2026-10-05',
+    description: 'തുണി സ്റ്റോക്ക് സാധനങ്ങൾ എടുത്തത്',
+    type: 'Expense',
+    category: 'Inventory / Raw Materials',
+    amount: 18500,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-9',
+    date: '2026-10-06',
+    description: 'സാധനം എത്തിക്കാൻ ഓട്ടോ കൂലി',
+    type: 'Expense',
+    category: 'Transport / Fuel',
+    amount: 350,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-10',
+    date: '2026-10-07',
+    description: 'സ്റ്റാഫ് ശമ്പള അഡ്വാൻസ്',
+    type: 'Expense',
+    category: 'Salaries / Labour',
+    amount: 5000,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-11',
+    date: '2026-10-08',
+    description: 'കടയിലെ കറന്റ് ബിൽ കെഎസ്ഇബി',
+    type: 'Expense',
+    category: 'Utilities',
+    amount: 3200,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-12',
+    date: '2026-10-09',
+    description: 'ഫേസ്ബുക്ക് ഇൻസ്റ്റാഗ്രാം പരസ്യം',
+    type: 'Expense',
+    category: 'Marketing / Advertising',
+    amount: 2500,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-13',
+    date: '2026-10-10',
+    description: 'ചായക്കടയിലെ ആഴ്ചപ്പണം നൽകിയത്',
+    type: 'Expense',
+    category: 'Food / Refreshments',
+    amount: 680,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-14',
+    date: '2026-10-11',
+    description: 'വെബ്സൈറ്റ് വർക്ക് ബാക്കി പണം കിട്ടി',
+    type: 'Income',
+    category: 'Client Payments',
+    amount: 24000,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-15',
+    date: '2026-10-12',
+    description: 'വീട്ടുചെലവിന് എടുത്തത്',
+    type: 'Expense',
+    category: 'Personal Withdrawals',
+    amount: 8000,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-16',
+    date: '2026-10-13',
+    description: 'വൈഫൈ ഇന്റർനെറ്റ് ബിൽ',
+    type: 'Expense',
+    category: 'Utilities',
+    amount: 899,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-17',
+    date: '2026-10-14',
+    description: 'കൊറിയർ ചാർജ് പാർസൽ അയച്ചത്',
+    type: 'Expense',
+    category: 'Transport / Fuel',
+    amount: 420,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-18',
+    date: '2026-10-15',
+    description: 'കൗണ്ടർ സെയിൽസ് വിൽപ്പന',
+    type: 'Income',
+    category: 'Sales',
+    amount: 16200,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-19',
+    date: '2026-10-16',
+    description: 'സ്റ്റാഫ് അസിസ്റ്റന്റ് ശമ്പളം ബാക്കി',
+    type: 'Expense',
+    category: 'Salaries / Labour',
+    amount: 14000,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-20',
+    date: '2026-10-17',
+    description: 'ഉച്ചയൂണ് ഹോട്ടൽ ഭക്ഷണം',
+    type: 'Expense',
+    category: 'Food / Refreshments',
+    amount: 450,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-21',
+    date: '2026-10-18',
+    description: 'പ്രിന്റർ മഷിയും പേപ്പറും വാങ്ങിയത്',
+    type: 'Expense',
+    category: 'Office / Supplies',
+    amount: 1250,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-22',
+    date: '2026-10-19',
+    description: 'കുട്ടിയുടെ സ്കൂൾ ഫീസ് സ്വന്തം ആവശ്യം',
+    type: 'Expense',
+    category: 'Personal Withdrawals',
+    amount: 4500,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-23',
+    date: '2026-10-20',
+    description: 'കാർ പെട്രോൾ ഡെലിവറിക്ക്',
+    type: 'Expense',
+    category: 'Transport / Fuel',
+    amount: 1200,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-24',
+    date: '2026-10-21',
+    description: 'കസ്റ്റമർ പ്രോജക്ട് പേയ്‌മെന്റ്',
+    type: 'Income',
+    category: 'Client Payments',
+    amount: 28000,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-25',
+    date: '2026-10-21',
+    description: 'കസ്റ്റമർ പ്രോജക്ട് പേയ്‌മെന്റ്',
+    type: 'Income',
+    category: 'Client Payments',
+    amount: 28000,
+    status: 'needs_review',
+    isDuplicate: true,
+    reviewReason: 'Possible duplicate transaction (repeated 2 times on same date)',
+  },
+  {
+    id: 'demo-ml-26',
+    date: '2026-10-23',
+    description: 'എസി സർവീസിംഗ് അറ്റകുറ്റപ്പണി',
+    type: 'Expense',
+    category: 'Repairs / Maintenance',
+    amount: 950,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-27',
+    date: '2026-10-24',
+    description: 'കച്ചവടം കളക്ഷൻ',
+    type: 'Income',
+    category: 'Sales',
+    amount: 11500,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-28',
+    date: '2026-10-25',
+    description: 'ബാങ്ക് യുപിഐ ഗേറ്റ്‌വേ ചാർജ്',
+    type: 'Expense',
+    category: 'Bank / Payment Charges',
+    amount: 450,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-29',
+    date: '2026-10-26',
+    description: 'വൈകുന്നേരത്തെ ചായ സ്നാക്സ്',
+    type: 'Expense',
+    category: 'Food / Refreshments',
+    amount: 220,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-30',
+    date: '2026-10-27',
+    description: 'ബൈക്ക് പെട്രോൾ',
+    type: 'Expense',
+    category: 'Transport / Fuel',
+    amount: 600,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-31',
+    date: '2026-10-28',
+    description: 'പലവക ചെലവുകൾ',
+    type: 'Expense',
+    category: 'Miscellaneous',
+    amount: 850,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-32',
+    date: '2026-10-29',
+    description: 'ചിട്ടി അടവ് തിരിച്ചടച്ചത്',
+    type: 'Expense',
+    category: 'Loan / EMI',
+    amount: 5000,
+    status: 'valid',
+  },
+  {
+    id: 'demo-ml-33',
+    date: '2026-10-30',
+    description: 'കടയിലെ ബാക്കി സെയിൽസ്',
+    type: 'Income',
+    category: 'Sales',
+    amount: 9800,
+    status: 'valid',
+  },
+];

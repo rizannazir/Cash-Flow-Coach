@@ -8,6 +8,7 @@ import {
   CashFlowTrendPoint,
   NeedsReviewItem,
 } from '../types/cashflow';
+import { Language } from './i18n';
 
 /**
  * Deterministic financial calculator for Cash-Flow Coach.
@@ -22,7 +23,8 @@ export function calculateCashFlowSummary(
     cashHealthReason?: string;
     topLeaks?: MoneyLeak[];
     nextMonthFocus?: string;
-  }
+  },
+  language: Language = 'en'
 ): CashFlowSummary {
   let totalIncome = 0;
   let totalExpenses = 0;
@@ -72,45 +74,53 @@ export function calculateCashFlowSummary(
     .filter((c) => c.type === 'Expense')
     .sort((a, b) => b.amount - a.amount);
 
+  const isMl = language === 'ml';
+
   // 1. Cash Health evaluation
   let cashHealth: CashHealthStatus = 'manageable';
-  let cashHealthHeadline = 'Cash Flow Looks Manageable';
-  let cashHealthReason =
-    'Based on the transactions provided, your monthly operating cash inflow is covering your expenses comfortably.';
+  let cashHealthHeadline = isMl ? 'പണമൊഴുക്ക് സുരക്ഷിതമാണ്' : 'Cash Flow Looks Manageable';
+  let cashHealthReason = isMl
+    ? 'നൽകിയ ഇടപാടുകൾ പരിശോധിച്ചതിൽ, നിങ്ങളുടെ പ്രതിമാസ ബിസിനസ്സ് വരുമാനം നിലവിലെ ചെലവുകൾക്ക് ആവശ്യത്തിന് തികയുന്നുണ്ട്.'
+    : 'Based on the transactions provided, your monthly operating cash inflow is covering your expenses comfortably.';
 
   if (openingBalance !== null && closingBalance !== null) {
     if (closingBalance < 0) {
       cashHealth = 'shortfall_risk';
-      cashHealthHeadline = 'Possible Cash Shortfall';
-      cashHealthReason =
-        'Based on the transactions provided, your net outflows have drawn closing cash below zero. Urgent collection of pending receivables or curbing non-critical spending is advised.';
+      cashHealthHeadline = isMl ? 'പണക്ഷാമ സാധ്യത മുന്നറിയിപ്പ്' : 'Possible Cash Shortfall';
+      cashHealthReason = isMl
+        ? 'വരവിനേക്കാൾ കൂടുതൽ തുക ചെലവഴിച്ചതിനാൽ അവസാന ബാലൻസ് നെഗറ്റീവ് ആയിരിക്കുന്നു. ക്ലയന്റുകളിൽ നിന്ന് കിട്ടാനുള്ള കുടിശ്ശിക വേഗത്തിൽ വാങ്ങുകയോ അനാവശ്യ ചെലവുകൾ ഉടൻ കുറയ്ക്കുകയോ ചെയ്യേണ്ടതുണ്ട്.'
+        : 'Based on the transactions provided, your net outflows have drawn closing cash below zero. Urgent collection of pending receivables or curbing non-critical spending is advised.';
     } else if (closingBalance < totalExpenses * 0.35 || netCashMovement < 0) {
       cashHealth = 'needs_attention';
-      cashHealthHeadline = 'Cash Cushion Needs Attention';
-      cashHealthReason =
-        'Your cash position remains positive, but your closing balance is thin relative to monthly recurring expenses. A delayed client payment could create operational friction.';
+      cashHealthHeadline = isMl ? 'പണത്തിന്റെ നീക്കിയിരിപ്പിൽ ശ്രദ്ധ വേണം' : 'Cash Cushion Needs Attention';
+      cashHealthReason = isMl
+        ? 'കയ്യിൽ ബാലൻസ് ഉണ്ടെങ്കിലും, ആവർത്തിച്ചുള്ള ചെലവുകൾ കാരണം അടുത്ത മാസം പണഞെരുക്കം ഉണ്ടാകാൻ സാധ്യതയുണ്ട്. വരാനുള്ള പേയ്‌മെന്റുകൾ ഉറപ്പാക്കുക.'
+        : 'Your cash position remains positive, but your closing balance is thin relative to monthly recurring expenses. A delayed client payment could create operational friction.';
     }
   } else {
     // Opening balance not provided
     if (netCashMovement < 0) {
       if (Math.abs(netCashMovement) > totalIncome * 0.4) {
         cashHealth = 'shortfall_risk';
-        cashHealthHeadline = 'Deficit Inflow Alert';
-        cashHealthReason =
-          'Your recorded expenses exceeded your income significantly this month. Verify if unbilled sales or pending receipts are missing.';
+        cashHealthHeadline = isMl ? 'വരവിനേക്കാൾ ചെലവ് വളരെ കൂടുതൽ' : 'Deficit Inflow Alert';
+        cashHealthReason = isMl
+          ? 'ഈ മാസം വരുമാനത്തേക്കാൾ കൂടുതൽ തുക ചെലവായിരിക്കുന്നു. ലഭിക്കാനുള്ള ബില്ലുകളോ കച്ചവട പണമോ രേഖപ്പെടുത്താൻ വിട്ടുപോയിട്ടുണ്ടോ എന്ന് പരിശോധിക്കുക.'
+          : 'Your recorded expenses exceeded your income significantly this month. Verify if unbilled sales or pending receipts are missing.';
       } else {
         cashHealth = 'needs_attention';
-        cashHealthHeadline = 'Net Negative Cash Flow';
-        cashHealthReason =
-          'Expenses exceeded income by ₹' +
-          Math.abs(netCashMovement).toLocaleString('en-IN') +
-          '. Review discretionary costs and accelerate pending client payments.';
+        cashHealthHeadline = isMl ? 'നെറ്റ് നെഗറ്റീവ് കാഷ് ഫ്ലോ' : 'Net Negative Cash Flow';
+        cashHealthReason = isMl
+          ? `ചെലവ് വരുമാനത്തേക്കാൾ ₹${Math.abs(netCashMovement).toLocaleString('en-IN')} കൂടുതലാണ്. അനാവശ്യ ചെലവുകൾ കുറയ്ക്കുകയും കിട്ടാനുള്ള തുക പിരിച്ചെടുക്കുകയും ചെയ്യുക.`
+          : 'Expenses exceeded income by ₹' +
+            Math.abs(netCashMovement).toLocaleString('en-IN') +
+            '. Review discretionary costs and accelerate pending client payments.';
       }
     } else if (netCashMovement < totalIncome * 0.15) {
       cashHealth = 'needs_attention';
-      cashHealthHeadline = 'Tight Operating Margin';
-      cashHealthReason =
-        'Your cash position is positive, but your net savings margin is slim. Recurring expenses could put pressure on next month if income is delayed.';
+      cashHealthHeadline = isMl ? 'ലാഭവിഹിതം കുറവാണ്' : 'Tight Operating Margin';
+      cashHealthReason = isMl
+        ? 'പണത്തിന്റെ സ്ഥിതി പോസിറ്റീവ് ആണെങ്കിലും, മിച്ചം വളരെ കുറവാണ്. അടുത്ത മാസത്തെ ചെലവുകൾക്കായി കരുതൽ ധനം ഉറപ്പാക്കുക.'
+        : 'Your cash position is positive, but your net savings margin is slim. Recurring expenses could put pressure on next month if income is delayed.';
     }
   }
 
@@ -126,12 +136,12 @@ export function calculateCashFlowSummary(
   }
 
   // 2. Identify Top 3 Money Leaks
-  // Look for: Frequent small spending (tea, snacks, food), high transport/fuel, personal withdrawals eating buffer, avoidable subscriptions, or oversized marketing.
   const topLeaks: MoneyLeak[] = identifyTopMoneyLeaks(
     transactions,
     expenseBreakdown,
     totalExpenses,
-    aiInsights?.topLeaks
+    aiInsights?.topLeaks,
+    language
   );
 
   // 3. Next Month Budget table
@@ -141,13 +151,11 @@ export function calculateCashFlowSummary(
 
   // 4. Next Month Focus recommendation
   const recommendedBuffer = Math.max(5000, Math.round(totalNextMonthBudget * 0.25 / 1000) * 1000);
-  const nextMonthFocus =
-    aiInsights?.nextMonthFocus ||
-    `Keep total expenses below ₹${totalNextMonthBudget.toLocaleString(
-      'en-IN'
-    )} and protect at least ₹${recommendedBuffer.toLocaleString(
-      'en-IN'
-    )} of cash reserve for peace of mind.`;
+  const defaultFocus = isMl
+    ? `അടുത്ത മാസത്തെ ആകെ ചെലവുകൾ ₹${totalNextMonthBudget.toLocaleString('en-IN')} ൽ താഴെ നിർത്തുകയും, സുരക്ഷിതമായ പ്രവർത്തനത്തിന് കുറഞ്ഞത് ₹${recommendedBuffer.toLocaleString('en-IN')} കരുതൽ ധനമായി സംരക്ഷിക്കുകയും ചെയ്യുക.`
+    : `Keep total expenses below ₹${totalNextMonthBudget.toLocaleString('en-IN')} and protect at least ₹${recommendedBuffer.toLocaleString('en-IN')} of cash reserve for peace of mind.`;
+
+  const nextMonthFocus = aiInsights?.nextMonthFocus || defaultFocus;
 
   // 5. Cash-flow Trend (chronological line chart)
   const trend = calculateCashFlowTrend(transactions, openingBalance);
@@ -183,7 +191,8 @@ function identifyTopMoneyLeaks(
   transactions: Transaction[],
   expenseBreakdown: CategoryBreakdown[],
   totalExpenses: number,
-  aiLeaks?: MoneyLeak[]
+  aiLeaks?: MoneyLeak[],
+  language: Language = 'en'
 ): MoneyLeak[] {
   if (aiLeaks && aiLeaks.length >= 2) {
     // If AI provided qualitative leaks, adopt and verify percentages
@@ -193,18 +202,23 @@ function identifyTopMoneyLeaks(
     }));
   }
 
+  const isMl = language === 'ml';
   const leaks: MoneyLeak[] = [];
 
   // Check 1: Food / Refreshments / Chai
   const foodCat = expenseBreakdown.find((c) => c.category === 'Food / Refreshments');
   if (foodCat && foodCat.amount > 0) {
     leaks.push({
-      category: 'Food / Refreshments',
+      category: isMl ? 'ഭക്ഷണം / ചായ പലഹാരം' : 'Food / Refreshments',
       amount: foodCat.amount,
       percentage: totalExpenses > 0 ? Math.round((foodCat.amount / totalExpenses) * 100) : 0,
       transactionCount: foodCat.count,
-      reason: `Frequent small spends (${foodCat.count} times) for chai, lunches, and snacks silently siphon operating cash without leaving tangible business assets.`,
-      fix: 'Set a weekly team snack cap (e.g. ₹500/week) and pay via a dedicated weekly petty cash envelope instead of daily UPI.',
+      reason: isMl
+        ? `ചായ, കാപ്പി, പലഹാരങ്ങൾ എന്നിവയ്ക്കായി ഇടയ്ക്കിടെയുള്ള ചെറിയ ചെലവുകൾ (${foodCat.count} തവണ) ബിസിനസ്സ് ഫണ്ടിൽ നിന്ന് നിശബ്ദമായി പണം ചോർത്തുന്നു.`
+        : `Frequent small spends (${foodCat.count} times) for chai, lunches, and snacks silently siphon operating cash without leaving tangible business assets.`,
+      fix: isMl
+        ? 'ആഴ്ചയിൽ പരമാവധി ₹500 നിശ്ചയിച്ച് ദിവസേനയുള്ള യുപിഐ ഇടപാടുകൾക്ക് പകരം പെറ്റി ക്യാഷ് ഉപയോഗിക്കുക.'
+        : 'Set a weekly team snack cap (e.g. ₹500/week) and pay via a dedicated weekly petty cash envelope instead of daily UPI.',
     });
   }
 
@@ -212,12 +226,16 @@ function identifyTopMoneyLeaks(
   const transportCat = expenseBreakdown.find((c) => c.category === 'Transport / Fuel');
   if (transportCat && transportCat.amount > 0) {
     leaks.push({
-      category: 'Transport / Fuel',
+      category: isMl ? 'പെട്രോൾ / യാത്ര' : 'Transport / Fuel',
       amount: transportCat.amount,
       percentage: totalExpenses > 0 ? Math.round((transportCat.amount / totalExpenses) * 100) : 0,
       transactionCount: transportCat.count,
-      reason: `Multiple unplanned auto/fuel trips (${transportCat.count} entries) are draining monthly cash flow.`,
-      fix: 'Batch raw material purchasing and customer deliveries into fixed Tuesdays and Fridays instead of daily on-demand runs.',
+      reason: isMl
+        ? `ആസൂത്രണമില്ലാത്ത പെട്രോൾ, ഓട്ടോ, യാത്രാ ചെലവുകൾ (${transportCat.count} തവണ) മാസാവസാനം വലിയ തുകയായി മാറുന്നു.`
+        : `Multiple unplanned auto/fuel trips (${transportCat.count} entries) are draining monthly cash flow.`,
+      fix: isMl
+        ? 'ദിവസേന പോകുന്നതിന് പകരം ആഴ്ചയിൽ നിശ്ചിത ദിവസങ്ങളിൽ (ചൊവ്വ, വെള്ളി) സാധനങ്ങൾ വാങ്ങലും വിതരണവും ഒരുമിച്ച് നടത്തുക.'
+        : 'Batch raw material purchasing and customer deliveries into fixed Tuesdays and Fridays instead of daily on-demand runs.',
     });
   }
 
@@ -225,12 +243,16 @@ function identifyTopMoneyLeaks(
   const personalCat = expenseBreakdown.find((c) => c.category === 'Personal Withdrawals');
   if (personalCat && personalCat.amount > 0) {
     leaks.push({
-      category: 'Personal Withdrawals',
+      category: isMl ? 'വീട്ടുചെലവ് / പേഴ്സണൽ' : 'Personal Withdrawals',
       amount: personalCat.amount,
       percentage: totalExpenses > 0 ? Math.round((personalCat.amount / totalExpenses) * 100) : 0,
       transactionCount: personalCat.count,
-      reason: `Mixing personal household expenses directly with the business current account depletes working capital unexpectedly.`,
-      fix: 'Transfer one fixed predictable owner withdrawal at the start of the month and strictly stop ad-hoc transfers during the week.',
+      reason: isMl
+        ? `ബിസിനസ്സ് അക്കൗണ്ടിൽ നിന്ന് വ്യക്തിഗത ആവശ്യങ്ങൾക്കും വീട്ടുചെലവുകൾക്കുമായി പണം എടുക്കുന്നത് പ്രവർത്തന മൂലധനത്തെ പെട്ടെന്ന് ഇല്ലാതാക്കുന്നു.`
+        : `Mixing personal household expenses directly with the business current account depletes working capital unexpectedly.`,
+      fix: isMl
+        ? 'ബിസിനസ്സിൽ നിന്ന് ഓരോ തവണയും പണം എടുക്കാതെ, ഓരോ മാസവും നിശ്ചിത ശമ്പളം പോലെ ഒരു തുക മാത്രം സ്വന്തം അക്കൗണ്ടിലേക്ക് മാറ്റുക.'
+        : 'Transfer one fixed predictable owner withdrawal at the start of the month and strictly stop ad-hoc transfers during the week.',
     });
   }
 
@@ -238,12 +260,16 @@ function identifyTopMoneyLeaks(
   const softwareCat = expenseBreakdown.find((c) => c.category === 'Software / Subscriptions');
   if (softwareCat && softwareCat.amount > 0 && leaks.length < 3) {
     leaks.push({
-      category: 'Software / Subscriptions',
+      category: isMl ? 'സോഫ്റ്റ്‌വെയർ / ടൂളുകൾ' : 'Software / Subscriptions',
       amount: softwareCat.amount,
       percentage: totalExpenses > 0 ? Math.round((softwareCat.amount / totalExpenses) * 100) : 0,
       transactionCount: softwareCat.count,
-      reason: 'Recurring digital tools and apps continue charging automatically even when underutilized.',
-      fix: 'Audit active tool licenses, pause unused seats, or switch from monthly to annual discounts where necessary.',
+      reason: isMl
+        ? 'ഉപയോഗിക്കാത്തതോ മറന്നുപോയതോ ആയ സോഫ്റ്റ്‌വെയർ സബ്സ്ക്രിപ്ഷനുകൾ എല്ലാ മാസവും പണം നഷ്ടപ്പെടുത്തുന്നു.'
+        : 'Recurring digital tools and apps continue charging automatically even when underutilized.',
+      fix: isMl
+        ? 'ഉപയോഗിക്കാത്ത ആപ്പുകൾ ഉടൻ റദ്ദാക്കുകയോ സൗജന്യ പ്ലാനുകളിലേക്ക് മാറ്റുകയോ ചെയ്യുക.'
+        : 'Audit active tool licenses, pause unused seats, or switch from monthly to annual discounts where necessary.',
     });
   }
 
@@ -251,12 +277,16 @@ function identifyTopMoneyLeaks(
   const marketingCat = expenseBreakdown.find((c) => c.category === 'Marketing / Advertising');
   if (marketingCat && marketingCat.amount > 0 && leaks.length < 3) {
     leaks.push({
-      category: 'Marketing / Advertising',
+      category: isMl ? 'പരസ്യം / പ്രമോഷൻ' : 'Marketing / Advertising',
       amount: marketingCat.amount,
       percentage: totalExpenses > 0 ? Math.round((marketingCat.amount / totalExpenses) * 100) : 0,
       transactionCount: marketingCat.count,
-      reason: 'Ad spends without clear customer conversion tracking act as a steady cash drain.',
-      fix: 'Pause non-performing creative campaigns and focus on high-intent local customer word-of-mouth or repeat buyers.',
+      reason: isMl
+        ? 'നേരിട്ട് വിൽപ്പന കൊണ്ടുവരാത്ത ഓൺലൈൻ പരസ്യങ്ങൾ പണം ചോർത്തുന്നതിന് കാരണമാകുന്നു.'
+        : 'Ad spends without clear customer conversion tracking act as a steady cash drain.',
+      fix: isMl
+        ? 'ഫലപ്രദമല്ലാത്ത പരസ്യങ്ങൾ നിർത്തിവെച്ച്, നിലവിലെ കസ്റ്റമർമാർ വഴിയുള്ള വിൽപ്പനയിൽ ശ്രദ്ധ കേന്ദ്രീകരിക്കുക.'
+        : 'Pause non-performing creative campaigns and focus on high-intent local customer word-of-mouth or repeat buyers.',
     });
   }
 
@@ -265,14 +295,26 @@ function identifyTopMoneyLeaks(
     if (leaks.length >= 3) break;
     // skip rent and salaries if we have alternatives, or include with practical advice
     if (!leaks.some((l) => l.category === item.category)) {
-      let reason = `${item.category} represents ${item.percentage}% of all cash spent this cycle.`;
-      let fix = 'Compare supplier quotes and negotiate payment milestones on 30-day terms.';
+      let reason = isMl
+        ? `${item.category} ഈ മാസത്തെ ആകെ ചെലവിന്റെ ${item.percentage}% വരുന്നു.`
+        : `${item.category} represents ${item.percentage}% of all cash spent this cycle.`;
+      let fix = isMl
+        ? 'സപ്ലയർമാരുമായി സംസാരിച്ച് പെയ്‌മെന്റ് നിബന്ധനകൾ 30 ദിവസത്തേക്ക് നീട്ടാൻ ശ്രമിക്കുക.'
+        : 'Compare supplier quotes and negotiate payment milestones on 30-day terms.';
       if (item.category === 'Rent') {
-        reason = 'Fixed premises rent consumes a significant portion of incoming revenue.';
-        fix = 'Ensure sub-leasing excess storage or renegotiate lock-in terms upon renewal.';
+        reason = isMl
+          ? 'കട/സ്ഥാപന വാടക വരുമാനത്തിന്റെ വലിയൊരു പങ്ക് അപഹരിക്കുന്നു.'
+          : 'Fixed premises rent consumes a significant portion of incoming revenue.';
+        fix = isMl
+          ? 'ഉപയോഗിക്കാത്ത സ്ഥലം ഉപവാടകയ്ക്ക് നൽകുകയോ വാടക കരാർ പുതുക്കുമ്പോൾ നിരക്ക് ചർച്ച ചെയ്യുകയോ ചെയ്യുക.'
+          : 'Ensure sub-leasing excess storage or renegotiate lock-in terms upon renewal.';
       } else if (item.category === 'Salaries / Labour') {
-        reason = 'Staff wages are a major committed outflow.';
-        fix = 'Align staffing schedules strictly to peak business sales hours to maximize productivity.';
+        reason = isMl
+          ? 'ജീവനക്കാരുടെ വേതനം പ്രധാന പ്രതിമാസ ബാധ്യതയാണ്.'
+          : 'Staff wages are a major committed outflow.';
+        fix = isMl
+          ? 'കൂടുതൽ വിൽപ്പനയുള്ള സമയങ്ങളിലേക്ക് സ്റ്റാഫ് ഡ്യൂട്ടി ക്രമീകരിച്ച് ഉൽപ്പാദനക്ഷമത കൂട്ടുക.'
+          : 'Align staffing schedules strictly to peak business sales hours to maximize productivity.';
       }
       leaks.push({
         category: item.category,

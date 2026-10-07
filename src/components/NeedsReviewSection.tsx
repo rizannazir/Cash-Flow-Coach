@@ -15,7 +15,11 @@ export const NeedsReviewSection: React.FC<NeedsReviewSectionProps> = ({
   onRemoveTransaction,
   onVerifyTransaction,
 }) => {
-  if (items.length === 0) return null;
+  const activeItems = items.filter((item) =>
+    transactions.some((t) => t.id === item.transactionId)
+  );
+
+  if (activeItems.length === 0) return null;
 
   return (
     <div className="bg-amber-50/60 border border-amber-200/90 rounded-2xl p-5 shadow-xs space-y-3">
@@ -26,7 +30,7 @@ export const NeedsReviewSection: React.FC<NeedsReviewSectionProps> = ({
           </div>
           <div>
             <h3 className="font-extrabold text-sm sm:text-base text-amber-950 tracking-tight flex items-center gap-2">
-              <span>🔎 Needs Review ({items.length})</span>
+              <span>🔎 Needs Review ({activeItems.length})</span>
             </h3>
             <p className="text-xs text-amber-800 mt-0.5">
               These items were flagged for duplicates, zero amounts, or unclear descriptions. Duplicates are kept by default unless you choose to remove them.
@@ -36,7 +40,7 @@ export const NeedsReviewSection: React.FC<NeedsReviewSectionProps> = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-        {items.map((item) => {
+        {activeItems.map((item) => {
           const tx = transactions.find((t) => t.id === item.transactionId);
 
           return (

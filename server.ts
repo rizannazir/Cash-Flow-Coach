@@ -34,7 +34,7 @@ if (process.env.GEMINI_API_KEY) {
 // AI Analysis Endpoint
 app.post('/api/analyze', async (req, res) => {
   try {
-    const { rawText, transactions, openingBalance } = req.body;
+    const { rawText, transactions, openingBalance, language } = req.body;
 
     if (!ai) {
       // Fallback response if no GEMINI_API_KEY is configured
@@ -45,29 +45,50 @@ app.post('/api/analyze', async (req, res) => {
       });
     }
 
+    const txSampleStr = JSON.stringify(transactions || rawText, null, 2);
+    const isMalayalam =
+      language === 'ml' ||
+      txSampleStr.includes('വാടക') ||
+      txSampleStr.includes('ചായ') ||
+      txSampleStr.includes('കച്ചവടം') ||
+      txSampleStr.includes('ശമ്പളം') ||
+      txSampleStr.includes('സാധന') ||
+      txSampleStr.includes('വീട്ടുചെലവ്');
+
     const prompt = `You are Cash-Flow Coach, an expert Indian small business cash-flow analyst.
 Analyze these financial transactions for a small Indian business owner (freelancer, shop owner, home-business, or solo entrepreneur).
+
+Language Note:
+Transactions can be written in English, Malayalam script (മലയാളം, e.g. ചായ, കട വാടക, ശമ്പളം, കച്ചവടം, പെട്രോൾ, വീട്ടുചെലവ്, സാധനങ്ങൾ വാങ്ങിയത്, കറന്റ് ബിൽ, ക്ലയന്റ് പേയ്‌മെന്റ്, പണിക്കൂലി, ചിട്ടി അടവ്), or Manglish (e.g. chaya, kada vadaka, veettu chelavu, sambalam, sadhnam vangiyath, kachavadam, upi sale).
+Understand the exact meaning of all Malayalam and Manglish entries, categorize them accurately into appropriate business heads, and recognize personal drawings (വീട്ടുചെലവ് / veettu chelavu / സ്വന്തം ആവശ്യം) as Personal Withdrawals.
+
+Language Requirement:
+${
+  isMalayalam
+    ? 'The user wants Malayalam (മലയാളം). You MUST write "cashHealthHeadline", "cashHealthReason", the "reason" and "fix" in "topMoneyLeaks", "nextMonthFocus", and budget rationales in natural, fluent, friendly, practical Malayalam (മലയാളത്തിൽ തന്നെ എഴുതുക). Keep numbers and JSON field names in English.'
+    : 'Write all feedback in clear, encouraging, friendly English.'
+}
 
 Opening Balance provided: ${openingBalance !== undefined && openingBalance !== null ? '₹' + openingBalance : 'None'}
 
 Transactions list:
-${JSON.stringify(transactions || rawText, null, 2)}
+${txSampleStr}
 
 Provide an intelligent business assessment strictly adhering to the following JSON schema:
 {
   "cashHealth": "manageable" | "needs_attention" | "shortfall_risk",
-  "cashHealthHeadline": string (e.g. "Manageable Cash Position" or "Tight Operating Cash"),
-  "cashHealthReason": string (nuanced, humble phrasing like "Based on the transactions provided, your cash position is positive, but recurring expenses could put pressure on next month's cash if income is delayed."),
+  "cashHealthHeadline": string,
+  "cashHealthReason": string,
   "topMoneyLeaks": [
     {
       "category": string,
       "amount": number,
       "percentage": number,
-      "reason": string (Why it matters - e.g. frequent small food deliveries adding up, high transport costs),
-      "fix": string (Practical, encouraging fix - e.g. "Combine delivery runs and batch grocery procurements twice a week.")
+      "reason": string,
+      "fix": string
     }
   ],
-  "nextMonthFocus": string (e.g. "Keep total expenses below ₹42,000 and protect at least ₹15,000 of available operating buffer."),
+  "nextMonthFocus": string,
   "budgetRecommendations": [
     {
       "category": string,
@@ -86,14 +107,20 @@ Provide an intelligent business assessment strictly adhering to the following JS
 Ensure the top money leaks highlight genuine leaks (recurring small expenses like tea/snacks, high delivery/fuel costs, unmonitored software subscriptions, unnecessary personal withdrawals) rather than just the fixed business rent.
 Return ONLY valid raw JSON with no Markdown backticks or explanations.`;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+    const generatePromise = ai.models.generateContent({
+      model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
         temperature: 0.2,
       },
     });
+
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('AI generation timed out')), 12000)
+    );
+
+    const response = await Promise.race([generatePromise, timeoutPromise]);
 
     const text = response.text || '';
     const cleanedText = text.replace(/^```json\s*/, '').replace(/\s*```$/, '').trim();
@@ -104,11 +131,11 @@ Return ONLY valid raw JSON with no Markdown backticks or explanations.`;
       analysis: parsedData,
     });
   } catch (error: any) {
-    console.error('Error during AI analysis:', error?.message || error);
+    // Graceful fallback response on timeout or error
     return res.status(200).json({
       success: false,
       fallback: true,
-      error: error?.message || 'AI analysis failed, falling back to local engine',
+      error: error?.message || 'AI analysis fallback',
     });
   }
 });
