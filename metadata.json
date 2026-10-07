@@ -1,0 +1,6 @@
+{
+  "name": "Cash-Flow Coach",
+  "description": "Turn messy money entries into clear business decisions. AI-powered cash-flow management tool for small Indian business owners and entrepreneurs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
